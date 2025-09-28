@@ -1,8 +1,8 @@
 diff --git a/kernel/Makefile b/kernel/Makefile
-index ac6d5b9e..62a76bee 100644
+index f8eed842..e26d9aa6 100644
 --- a/kernel/Makefile
 +++ b/kernel/Makefile
-@@ -57,6 +57,14 @@ ifndef KSU_NEXT_MANAGER_HASH
+@@ -66,6 +66,14 @@ ifndef KSU_NEXT_MANAGER_HASH
  KSU_NEXT_MANAGER_HASH := 79e590113c4c4c0c222978e413a5faa801666957b1212a328e46c00c69821bf7
  endif
  
@@ -17,7 +17,7 @@ index ac6d5b9e..62a76bee 100644
  ifdef KSU_MANAGER_PACKAGE
  ccflags-y += -DKSU_MANAGER_PACKAGE=\"$(KSU_MANAGER_PACKAGE)\"
  $(info -- KernelSU-Next Manager package name: $(KSU_MANAGER_PACKAGE))
-@@ -72,9 +72,13 @@ endif
+@@ -73,9 +81,13 @@ endif
  
  $(info -- KernelSU-Next Manager signature size: $(KSU_NEXT_MANAGER_SIZE))
  $(info -- KernelSU-Next Manager signature hash: $(KSU_NEXT_MANAGER_HASH))
@@ -32,10 +32,10 @@ index ac6d5b9e..62a76bee 100644
  ccflags-y += -DKSU_UMOUNT
  
 diff --git a/kernel/apk_sign.c b/kernel/apk_sign.c
-index 522eb506..cf76c6c6 100644
+index 00046a40..b0a34514 100644
 --- a/kernel/apk_sign.c
 +++ b/kernel/apk_sign.c
-@@ -387,5 +387,5 @@ bool is_manager_apk(char *path)
+@@ -339,5 +339,5 @@ bool is_manager_apk(char *path)
  	pr_info("%s: expected size: %u, expected hash: %s\n",
  		path, expected_manager_size, expected_manager_hash);
  
