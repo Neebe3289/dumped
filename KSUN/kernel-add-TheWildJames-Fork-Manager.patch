@@ -1,8 +1,8 @@
 diff --git a/kernel/Makefile b/kernel/Makefile
-index a1ffe543..e19c3672 100644
+index 3468c923..2cf473d7 100644
 --- a/kernel/Makefile
 +++ b/kernel/Makefile
-@@ -70,6 +70,14 @@ ifndef KSU_NEXT_MANAGER_HASH
+@@ -71,6 +71,14 @@ ifndef KSU_NEXT_MANAGER_HASH
  KSU_NEXT_MANAGER_HASH := 79e590113c4c4c0c222978e413a5faa801666957b1212a328e46c00c69821bf7
  endif
  
@@ -17,7 +17,7 @@ index a1ffe543..e19c3672 100644
  ifdef KSU_MANAGER_PACKAGE
  ccflags-y += -DKSU_MANAGER_PACKAGE=\"$(KSU_MANAGER_PACKAGE)\"
  $(info -- KernelSU-Next Manager package name: $(KSU_MANAGER_PACKAGE))
-@@ -77,9 +85,13 @@ endif
+@@ -78,9 +86,13 @@ endif
  
  $(info -- KernelSU-Next Manager signature size: $(KSU_NEXT_MANAGER_SIZE))
  $(info -- KernelSU-Next Manager signature hash: $(KSU_NEXT_MANAGER_HASH))
