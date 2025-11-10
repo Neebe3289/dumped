@@ -1,4 +1,4 @@
-From b9772721217977a2a43bce6fb077c3b6565b8f0d Mon Sep 17 00:00:00 2001
+From 6c0532465e71ad30111ef113136bb36d10849051 Mon Sep 17 00:00:00 2001
 From: Neebe3289 <neebexd@gmail.com>
 Date: Thu, 6 Nov 2025 07:11:58 +0700
 Subject: [PATCH] kernel: Implement SuSFS 1.5.12
@@ -190,10 +190,10 @@ index ab6dd5c9..2c3e8fde 100644
 +
  endmenu
 diff --git a/kernel/Makefile b/kernel/Makefile
-index 4498308b..3468c923 100644
+index ed643bc2..d0b27869 100644
 --- a/kernel/Makefile
 +++ b/kernel/Makefile
-@@ -136,4 +136,82 @@ endif
+@@ -135,4 +135,82 @@ endif
  ccflags-y += -Wno-implicit-function-declaration -Wno-strict-prototypes -Wno-int-conversion -Wno-gcc-compat
  ccflags-y += -Wno-declaration-after-statement -Wno-unused-function
  
@@ -317,7 +317,7 @@ index bcdac3f0..c59be97c 100644
  	return ksu_queue_work(&ksu_save_work);
  }
 diff --git a/kernel/core_hook.c b/kernel/core_hook.c
-index 1744220b..b0224da2 100644
+index 2682b7df..d7f05f7e 100644
 --- a/kernel/core_hook.c
 +++ b/kernel/core_hook.c
 @@ -35,6 +35,10 @@
@@ -425,7 +425,7 @@ index 1744220b..b0224da2 100644
  extern void ksu_sucompat_init();
  extern void ksu_sucompat_exit();
  
-@@ -247,6 +332,14 @@ static bool is_system_bin_su(void)
+@@ -286,6 +371,14 @@ static bool is_system_bin_su(void)
  int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
  		     unsigned long arg4, unsigned long arg5)
  {
@@ -440,7 +440,7 @@ index 1744220b..b0224da2 100644
  	// if success, we modify the arg5 as result!
  	u32 *result = (u32 *)arg5;
  	u32 reply_ok = KERNEL_SU_OPTION;
-@@ -363,6 +456,9 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
+@@ -402,6 +495,9 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
  			if (!post_fs_data_lock) {
  				post_fs_data_lock = true;
  				pr_info("post-fs-data triggered\n");
@@ -450,7 +450,7 @@ index 1744220b..b0224da2 100644
  				on_post_fs_data();
  			}
  			break;
-@@ -372,6 +468,9 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
+@@ -411,6 +507,9 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
  			if (!boot_complete_lock) {
  				boot_complete_lock = true;
  				pr_info("boot_complete triggered\n");
@@ -460,7 +460,7 @@ index 1744220b..b0224da2 100644
  			}
  			break;
  		}
-@@ -478,6 +577,392 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
+@@ -517,6 +616,392 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
  	}
  #endif
  
@@ -853,7 +853,7 @@ index 1744220b..b0224da2 100644
  	// all other cmds are for 'root manager'
  	if (!from_manager) {
  		return 0;
-@@ -543,6 +1028,12 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
+@@ -582,6 +1067,12 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
  		}
  
  		if (enabled) {
@@ -866,7 +866,7 @@ index 1744220b..b0224da2 100644
  			ksu_sucompat_init();
  		} else {
  			ksu_sucompat_exit();
-@@ -583,11 +1074,15 @@ static bool should_umount(struct path *path)
+@@ -622,11 +1113,15 @@ static bool should_umount(struct path *path)
  		return false;
  	}
  
@@ -882,7 +882,7 @@ index 1744220b..b0224da2 100644
  }
  
  static int ksu_umount_mnt(struct path *path, int flags)
-@@ -600,7 +1095,11 @@ static int ksu_umount_mnt(struct path *path, int flags)
+@@ -639,7 +1134,11 @@ static int ksu_umount_mnt(struct path *path, int flags)
  #endif
  }
  
@@ -894,7 +894,7 @@ index 1744220b..b0224da2 100644
  {
  	struct path path;
  	int err = kern_path(mnt, 0, &path);
-@@ -620,12 +1119,139 @@ static void try_umount(const char *mnt, bool check_mnt, int flags)
+@@ -659,12 +1158,139 @@ static void try_umount(const char *mnt, bool check_mnt, int flags)
  		return;
  	}
  
@@ -1034,7 +1034,7 @@ index 1744220b..b0224da2 100644
  int ksu_handle_setuid(struct cred *new, const struct cred *old)
  {
  	// this hook is used for umounting overlayfs for some uid, if there isn't any module mounted, just ignore it!
-@@ -700,6 +1326,7 @@ int ksu_handle_setuid(struct cred *new, const struct cred *old)
+@@ -739,6 +1365,7 @@ int ksu_handle_setuid(struct cred *new, const struct cred *old)
  
  	return 0;
  }
@@ -1092,7 +1092,7 @@ index 421c384c..e7f8dfed 100644
  					 umode_t mode);
  extern ssize_t ksu_kernel_read_compat(struct file *p, void *buf, size_t count,
 diff --git a/kernel/ksu.c b/kernel/ksu.c
-index 0b24f1cc..80027f35 100644
+index 11864141..7d9db0a6 100644
 --- a/kernel/ksu.c
 +++ b/kernel/ksu.c
 @@ -11,6 +11,10 @@
@@ -1118,10 +1118,10 @@ index 0b24f1cc..80027f35 100644
  
  	ksu_workqueue = alloc_ordered_workqueue("kernelsu_work_queue", 0);
 diff --git a/kernel/ksud.c b/kernel/ksud.c
-index 8b4739d6..4f6a6c6b 100644
+index d56b9fb4..5d05fafd 100644
 --- a/kernel/ksud.c
 +++ b/kernel/ksud.c
-@@ -65,6 +65,10 @@ bool ksu_execveat_hook __read_mostly = true;
+@@ -64,6 +64,10 @@ bool ksu_execveat_hook __read_mostly = true;
  bool ksu_input_hook __read_mostly = true;
  #endif
  
@@ -1132,7 +1132,7 @@ index 8b4739d6..4f6a6c6b 100644
  u32 ksu_devpts_sid;
  
  #ifdef CONFIG_COMPAT
-@@ -680,6 +684,10 @@ static void stop_execve_hook()
+@@ -678,6 +682,10 @@ static void stop_execve_hook()
  	ksu_execveat_hook = false;
  	pr_info("stop execve_hook\n");
  #endif
